@@ -48,7 +48,7 @@ def divided_differences(x_points: float, y_points: float) -> list[float]:
     return table[0]
 
 
-def interpolate(x: float,
+def lagrange_interpolate(x: float,
                 func: Callable[[float], float],
                 grid: list[float],
                 n: int = 11) -> float | None:
@@ -136,16 +136,15 @@ def interpolation_error(x: float, grid: list, n: int = 2) -> list[list[float], l
     return [[min_derivative, max_derivative], [Rmn, Rmx]]
 
 
-func = lambda x: x ** 2 - log(0.5 * x)
+func = lambda x: x**2 - cos(0.5 * np.pi * x)
 
-interval = [0.5, 1.0]
+interval = [0.4, 0.9]
 grid = np.linspace(interval[0], interval[1], 11)
 
-values = [0.92, 0.53, 0.98, 0.77]
+values = [0.64]
 n = 3
 for j in values:
-    print(interpolate(j, func, grid, n), func(j), func(j) - interpolate(j, func, grid, n),
-          interpolation_error(j, grid, n)[1])
+    print(lagrange_interpolate(j,func,grid,n), func(j), func(j) - lagrange_interpolate(j, func, grid, n),)
 print('\n')
 
 for j in values:
