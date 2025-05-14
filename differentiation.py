@@ -5,6 +5,17 @@ from interpolation_module import find_n_closest
 
 
 def differentiation_lagrange(x_values: list[float], y_values: list[float], n: int, x_diff: float) -> float:
+    """Вычисляет производную 1-го порядка в точке x_diff с использованием интерполяционного многочлена Лагранжа.
+
+      Args:
+          x_values: Список значений аргумента функции.
+          y_values: Список значений функции, соответствующих x_values.
+          n: Количество точек интерполяции.
+          x_diff: Точка, в которой вычисляется производная.
+
+      Returns:
+          Значение 1-й производной в точке x_diff, вычисленное с помощью интерполяционного многочлена Лагранжа.
+    """
     indexes = find_n_closest(x_diff, x_values, n)
     x_values = x_values[indexes[0]:indexes[-1] + 1]
     y_values = y_values[indexes[0]:indexes[-1] + 1]
