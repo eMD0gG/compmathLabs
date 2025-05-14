@@ -4,8 +4,8 @@ from typing import Callable, Optional, Any
 
 
 def find_n_closest(target: float,
-                           grid: list[float],
-                           n: int) -> list[int]:
+                   grid: list[float],
+                   n: int) -> list[int]:
     """
     Ищет индексы n ближайших к target значений из сетки grid.
     Результат отсортирован по возрастанию значений.
@@ -28,6 +28,7 @@ def find_n_closest(target: float,
     closest_indices.sort(key=lambda x: grid[x])
 
     return closest_indices
+
 
 def find_closest_index(values: list[float], target: float) -> int:
     """
