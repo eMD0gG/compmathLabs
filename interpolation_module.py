@@ -4,11 +4,11 @@ from typing import Callable, Optional, Any
 
 
 def find_n_closest(target: float,
-                   grid: list[float],
-                   n: int) -> list[float]:
+                           grid: list[float],
+                           n: int) -> list[int]:
     """
-    Ищет n ближайших к target значений из сетки grid.
-    Результат отсортирован по возрастанию.
+    Ищет индексы n ближайших к target значений из сетки grid.
+    Результат отсортирован по возрастанию значений.
 
     Args:
         target (float): Число, к которому ищутся ближайшие значения.
@@ -16,12 +16,18 @@ def find_n_closest(target: float,
         n (int): Количество ближайших значений.
 
     Returns:
-        List[float]: Отсортированный список из n ближайших чисел.
+        list[int]: Отсортированный список индексов из n ближайших чисел.
     """
-    sorted_grid = sorted(grid, key=lambda x: abs(x - target))[:n]
-    sorted_grid.sort()
-    return sorted_grid
+    indexed_grid = list(enumerate(grid))
 
+    closest_indices = [index for index, value in sorted(
+        indexed_grid,
+        key=lambda x: abs(x[1] - target)
+    )[:n]]
+
+    closest_indices.sort(key=lambda x: grid[x])
+
+    return closest_indices
 
 def find_closest_index(values: list[float], target: float) -> int:
     """
@@ -65,25 +71,29 @@ def divided_differences(x_points: list[float], y_points: list[float]) -> list[fl
 
 def lagrange_interpolate(x: float,
                          func: Callable[[float], float],
-                         grid: list[float],
+                         x_values: list[float],
+                         y_values: list[float],
                          n: int = 11) -> float | None:
     """Вычисляет интерполяционного многочлена Лагранжа в точке x.
 
        Args:
            x (float): Точка, в которой вычисляется интерполированное значение.
            func (Callable[[float], float]): Функция, которую нужно интерполировать.
-           grid (list[float]): Список узлов интерполяции (значений аргумента функции).
+           x_values (list[float]): Узлы интерполяции.
+           y_values (list[float]): Значения функции в узлах интерполяции.
            n (int, optional): Количество ближайших узлов для интерполяции.
 
        Returns:
            Optional[float]: Интерполированное значение или None.
      """
-    points = np.array(find_n_closest(x, grid, n))
+    indexes = np.array(find_n_closest(x, x_values, n))
+    x_values = x_values[indexes[0]:indexes[-1] + 1]
+    y_values = y_values[indexes[0]:indexes[-1] + 1]
     result = 0
     for i in range(n):
         j = np.arange(n) != i
-        p = np.prod((x - points[j]) / (points[i] - points[j]))
-        result += func(points[i]) * p
+        p = np.prod((x - x_values[j]) / (x_values[i] - x_values[j]))
+        result += func(y_values[i]) * p
 
     return result
 
@@ -423,46 +433,46 @@ y_values = list(map(func, x_values))
 values = [0.12, 0.58, 0.33]
 
 # Вывод таблицы конечных разностей
-table = finite_differences(x_values, y_values)
-print("\nТаблица конечных разностей:")
-separator = "-" * (12 * (n + 1) + n)
-header = f"{'y':^{12}}|"
-for i in range(1, n):
-    header += f"{f'Δ^{i}y':^{12}}|"
-print(separator)
-print(header)
-print(separator)
-for j in range(n):
-    row = f"{table[0][j]:^{12}.4f}|"
-    for i in range(1, n - j):
-        row += f"{table[i][j]:^{12}.4f}|"
-    print(row)
-print(separator)
-
-print(func(values[0]), interpolation_newton_forward(x_values, y_values, values[0]),
-      func(values[0]) - interpolation_newton_forward(x_values, y_values, values[0]))
-
-print(func(values[1]), interpolation_newton_backward(x_values, y_values, values[1]),
-      func(values[1]) - interpolation_newton_backward(x_values, y_values, values[1]))
-
-print(func(values[2]), gauss_backward(x_values, y_values, values[2]),
-      func(values[2]) - gauss_backward(x_values, y_values, values[2]))
-
-
-min_der = 0
-max_der = -2048
-fctrl = factorial(11)
-w1 = 1
-w2 = 1
-w3 = 1
-for i in range(n):
-    w1 *= values[0] - x_values[i]
-    w2 *= values[1] - x_values[i]
-    w3 *= values[2] - x_values[i]
-
-min_R = 0
-max_R1 = max_der*w1/fctrl
-max_R2 = max_der*w2/fctrl
-max_R3 = max_der*w3/fctrl
-
-print(max_R1, max_R2, max_R3, sep="\n")
+# table = finite_differences(x_values, y_values)
+# print("\nТаблица конечных разностей:")
+# separator = "-" * (12 * (n + 1) + n)
+# header = f"{'y':^{12}}|"
+# for i in range(1, n):
+#     header += f"{f'Δ^{i}y':^{12}}|"
+# print(separator)
+# print(header)
+# print(separator)
+# for j in range(n):
+#     row = f"{table[0][j]:^{12}.4f}|"
+#     for i in range(1, n - j):
+#         row += f"{table[i][j]:^{12}.4f}|"
+#     print(row)
+# print(separator)
+#
+# print(func(values[0]), interpolation_newton_forward(x_values, y_values, values[0]),
+#       func(values[0]) - interpolation_newton_forward(x_values, y_values, values[0]))
+#
+# print(func(values[1]), interpolation_newton_backward(x_values, y_values, values[1]),
+#       func(values[1]) - interpolation_newton_backward(x_values, y_values, values[1]))
+#
+# print(func(values[2]), gauss_backward(x_values, y_values, values[2]),
+#       func(values[2]) - gauss_backward(x_values, y_values, values[2]))
+#
+#
+# min_der = 0
+# max_der = -2048
+# fctrl = factorial(11)
+# w1 = 1
+# w2 = 1
+# w3 = 1
+# for i in range(n):
+#     w1 *= values[0] - x_values[i]
+#     w2 *= values[1] - x_values[i]
+#     w3 *= values[2] - x_values[i]
+#
+# min_R = 0
+# max_R1 = max_der*w1/fctrl
+# max_R2 = max_der*w2/fctrl
+# max_R3 = max_der*w3/fctrl
+#
+# print(max_R1, max_R2, max_R3, sep="\n")
