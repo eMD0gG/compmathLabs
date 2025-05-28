@@ -1,4 +1,4 @@
-from math import *
+from math import cos, sin, factorial
 import numpy as np
 from typing import Callable, Optional, Any
 from interpolation_module import find_n_closest

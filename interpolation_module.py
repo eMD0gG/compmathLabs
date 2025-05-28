@@ -41,6 +41,7 @@ def find_closest_index(values: list[float], target: float) -> int:
         Returns:
            float: индекс ближайшего к target числа.
     """
+    n = len(values)
     closest_index = min(range(n), key=lambda i: abs(values[i] - target))
     return closest_index
 
@@ -425,10 +426,8 @@ interval = [0.1, 0.6]
 
 n = 11
 
-grid = np.linspace(interval[0], interval[1], n)
-print(grid)
-
-x_values = list(grid)
+x_values = np.linspace(interval[0], interval[1], n)
+print(x_values)
 y_values = list(map(func, x_values))
 
 values = [0.12, 0.58, 0.33]
@@ -460,8 +459,8 @@ values = [0.12, 0.58, 0.33]
 #       func(values[2]) - gauss_backward(x_values, y_values, values[2]))
 #
 #
-# min_der = 0
-# max_der = -2048
+# min_der = -2048*sin(2*0.1)
+# max_der = -2048*sin(2*0.6)
 # fctrl = factorial(11)
 # w1 = 1
 # w2 = 1
@@ -471,9 +470,14 @@ values = [0.12, 0.58, 0.33]
 #     w2 *= values[1] - x_values[i]
 #     w3 *= values[2] - x_values[i]
 #
-# min_R = 0
 # max_R1 = max_der*w1/fctrl
 # max_R2 = max_der*w2/fctrl
 # max_R3 = max_der*w3/fctrl
+# min_R1 = min_der*w1/fctrl
+# min_R2 = min_der*w2/fctrl
+# min_R3 = min_der*w3/fctrl
 #
+# print('\n')
 # print(max_R1, max_R2, max_R3, sep="\n")
+# print('\n')
+# print(min_R1, min_R2, min_R3, sep="\n")
